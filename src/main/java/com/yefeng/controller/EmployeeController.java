@@ -1,16 +1,15 @@
 package com.yefeng.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yefeng.common.R;
 import com.yefeng.entity.Employee;
 import com.yefeng.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -22,6 +21,12 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
+    /**
+     * 登录
+     * @param request
+     * @param employee
+     * @return
+     */
     @PostMapping("/login")
     public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee) {
         // 将页面提交的密码password进行md5加密处理
@@ -52,7 +57,11 @@ public class EmployeeController {
         return R.success(emp);
     }
 
-
+    /**
+     * 退出登录
+     * @param request
+     * @return
+     */
     @PostMapping("/logout")
     public R<String> logout(HttpServletRequest request) {
         request.getSession().removeAttribute("employee");
@@ -60,7 +69,12 @@ public class EmployeeController {
     }
 
 
-
+    /**
+     * 添加员工信息接口
+     * @param request
+     * @param employee
+     * @return
+     */
     @PostMapping
     public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
         log.info("新增员工，员工信息：{}", employee.toString());
@@ -72,5 +86,28 @@ public class EmployeeController {
         employee.setUpdateUser(empID);
         employeeService.save(employee);
         return R.success("新增员工成功");
+    }
+
+    /**
+     * 分页查询员工信息接口
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name) {
+        log.info("page={}, pageSize={}, name={}", page, pageSize, name);
+        // 构造分页器
+        Page pageInfo = new Page(page, pageSize);
+        // 构造条件构造器
+        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
+        // 添加过滤条件
+        wrapper.like(!StringUtils.isEmpty(name), Employee::getName, name);
+        // 添加排序条件
+        wrapper.orderByDesc(Employee::getUpdateTime);
+        // 执行
+        employeeService.page(pageInfo, wrapper);
+        return R.success(pageInfo);
     }
 }

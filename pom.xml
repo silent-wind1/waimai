@@ -37,7 +37,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.4.2</version>
+            <version>3.5.2</version>
         </dependency>
 
         <dependency>
@@ -74,6 +74,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+
+        <!--   mybatis-分页     -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-extension</artifactId>
+            <version>3.5.2</version>
         </dependency>
     </dependencies>
 
