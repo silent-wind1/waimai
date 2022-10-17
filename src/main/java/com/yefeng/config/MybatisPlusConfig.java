@@ -6,11 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
-<<<<<<< HEAD
  * MybatisPlus插件
-=======
- * MP配置类
->>>>>>> origin/master
  */
 @Configuration
 public class MybatisPlusConfig {

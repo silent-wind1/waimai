@@ -2,6 +2,7 @@ package com.yefeng.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.sun.deploy.net.HttpResponse;
+import com.yefeng.common.BaseContext;
 import com.yefeng.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -49,6 +50,11 @@ public class LoginCheckFilter implements Filter {
         //4.若是需要拦截的路径，再获取session中登陆对象
         if(request.getSession().getAttribute("employee") != null) {
             log.info("用户已登录，用户id为：{}",request.getSession().getAttribute("employee"));
+            // 获取当前线程id唯一标识
+            long id = Thread.currentThread().getId() ;
+            log.info("线程id:{}" ,id);
+            Long empId= (Long) request.getSession().getAttribute("employee");
+            BaseContext.setCurrentId(empId);
             filterChain.doFilter(request, response);
             return;
         }

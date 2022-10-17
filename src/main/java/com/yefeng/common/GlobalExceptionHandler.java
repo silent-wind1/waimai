@@ -13,9 +13,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 @RestControllerAdvice(annotations = {RestController.class, Controller.class})
 public class GlobalExceptionHandler {
     //@ExceptionHandler注解我们一般是用来自定义异常的。
-    // TDDO: SASASAS
     // 可以认为它是一个异常拦截器（处理器）。
-
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public R<String> exceptionHandler(SQLIntegrityConstraintViolationException exception) {
         log.error(exception.getMessage());
@@ -24,8 +22,6 @@ public class GlobalExceptionHandler {
             String message = split[2] + "账号已存在";
             return R.error(message);
         }
-
-
         return R.error("未知错误");
     }
 }

@@ -63,13 +63,15 @@ public class EmployeeController {
 
     @PostMapping
     public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
+        long id = Thread.currentThread().getId() ;
+        log.info("线程id:{}" ,id);
         log.info("新增员工，员工信息：{}", employee.toString());
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        Long empID = (Long) request.getSession().getAttribute("employee");
-        employee.setCreateUser(empID);
-        employee.setUpdateUser(empID);
+//        Long empID = (Long) request.getSession().getAttribute("employee");
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setCreateUser(empID);
+//        employee.setUpdateUser(empID);
         employeeService.save(employee);
         return R.success("新增员工成功");
     }
@@ -105,11 +107,14 @@ public class EmployeeController {
     @PutMapping
     public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
         log.info("employee={}", employee.toString());
+        // 获取当前线程id唯一标识
+        long id = Thread.currentThread().getId() ;
+        log.info("线程id:{}" ,id);
         // 先获取到前端传递过来的id
-        Long id = (Long) request.getSession().getAttribute("employee");
+//        Long id = (Long) request.getSession().getAttribute("employee");
         // 通过id去禁用该用户
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(id);
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser(id);
         employeeService.updateById(employee);
         return R.success("员工信息修改成功");
     }

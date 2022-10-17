@@ -11,7 +11,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 @ServletComponentScan
 public class XiaofangwaimaiApplication {
 
-    public static void main(String[] args) {
+      public static void main(String[] args) {
         log.info("-------启动项目------");
         SpringApplication.run(XiaofangwaimaiApplication.class, args);
     }
