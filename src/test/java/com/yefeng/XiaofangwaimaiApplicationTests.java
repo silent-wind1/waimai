@@ -53,7 +53,7 @@ class XiaofangwaimaiApplicationTests {
         for (int i = 0; i < 11; i++) {
 //            employee.setName(name[new Random().nextInt(11)]);
 //            employee.setUsername(name[new Random().nextInt(11)]);
-//            employee.setId(i + 3L);
+            employee.setId(i + 2L);
             employee.setName(name[i]);
             employee.setUsername(username[i]);
             employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));

@@ -1,16 +1,16 @@
 package com.yefeng.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yefeng.common.R;
 import com.yefeng.entity.Employee;
 import com.yefeng.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -72,5 +72,62 @@ public class EmployeeController {
         employee.setUpdateUser(empID);
         employeeService.save(employee);
         return R.success("新增员工成功");
+    }
+
+    /**
+     * 员工分页查询
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name) {
+        // 构造分页器
+        Page pageInfo = new Page(page, pageSize);
+        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
+        // 添加过滤查询
+        wrapper.like(StringUtils.hasLength(name), Employee::getName, name);
+        // 添加排序条件
+        wrapper.orderByDesc(Employee::getUpdateTime);
+        // 执行
+        employeeService.page(pageInfo, wrapper);
+        return R.success(pageInfo);
+    }
+
+
+    /**
+     * 修改员工信息
+     * @param request
+     * @param employee
+     * @return
+     */
+    @PutMapping
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
+        log.info("employee={}", employee.toString());
+        // 先获取到前端传递过来的id
+        Long id = (Long) request.getSession().getAttribute("employee");
+        // 通过id去禁用该用户
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(id);
+        employeeService.updateById(employee);
+        return R.success("员工信息修改成功");
+    }
+
+    /**
+     * 获取编辑员工信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<Employee> getEmployee(@PathVariable String id) {
+        Employee employee = employeeService.getById(id);
+        if(employee != null) {
+            return R.success(employee);
+        }
+//        QueryWrapper<Employee> wrapper = new QueryWrapper<>();
+//        wrapper.eq("id", id);
+//        Employee employee = employeeService.getOne(wrapper);
+        return R.error("没有查询到此用户");
     }
 }
