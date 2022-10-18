@@ -1,5 +1,6 @@
 package com.yefeng.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yefeng.common.R;
@@ -64,7 +65,8 @@ public class CategoryController {
     @DeleteMapping
     public R<String> delete(Long ids) {
         log.info("delete -> id={}", ids);
-        categoryService.removeById(ids);
+//        categoryService.removeById(ids);
+        categoryService.remove(ids);
         return R.success("删除成功");
     }
 }
