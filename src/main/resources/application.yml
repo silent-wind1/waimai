@@ -20,3 +20,6 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: ASSIGN_ID
+      # 逻辑删除
+      logic-delete-value: 1 # 删除掉为 1
+      logic-not-delete-value: 0 # 没有删除为 0
