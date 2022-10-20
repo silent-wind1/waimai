@@ -70,4 +70,11 @@ class XiaofangwaimaiApplicationTests {
         System.out.println("添加成功");
     }
 
+
+    @Test
+    void subString() {
+        String fileName = "yefeng.jpg";;
+        String substring = fileName.substring(fileName.lastIndexOf("."));
+        System.out.println(substring);
+    }
 }

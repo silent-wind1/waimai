@@ -38,6 +38,8 @@ public class LoginCheckFilter implements Filter {
                 "/employee/login",
                 "/employee/logout",
                 "/employee/page",
+                "/common/**",
+                "/dish/**",
         };
         //3.判断用户访问的路径是否在放行的路径中,若是直接放行
         boolean flag = checkURI(urls, requestURI);

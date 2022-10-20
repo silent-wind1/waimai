@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/category")
@@ -47,6 +49,7 @@ public class CategoryController {
 
     /**
      * 修改菜品分类与套餐分类
+     *
      * @param category
      * @return
      */
@@ -68,5 +71,19 @@ public class CategoryController {
 //        categoryService.removeById(ids);
         categoryService.remove(ids);
         return R.success("删除成功");
+    }
+
+    /**
+     * 获取菜品分类
+     * @param category
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Category>> list(Category category) {
+        QueryWrapper<Category> wrapper = new QueryWrapper<>();
+        wrapper.eq(category.getType() != null, "type", category.getType());
+        wrapper.orderByDesc("sort").orderByDesc("update_time");
+        List<Category> list = categoryService.list(wrapper);
+        return R.success(list);
     }
 }
