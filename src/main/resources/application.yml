@@ -21,11 +21,11 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
       # 逻辑删除
-      logic-delete-field: isDeleted # 全局逻辑删除的实体字段名
-      logic-delete-value: 1 # 删除掉为 1
-      logic-not-delete-value: 0 # 没有删除为 0
+#      logic-delete-field: isDeleted # 全局逻辑删除的实体字段名
+#      logic-delete-value: 1 # 删除掉为 1
+#      logic-not-delete-value: 0 # 没有删除为 0
 
 
 reggie:
-#  path: F:\xiaofangwaimai\src\main\java\com\yefeng\images\ # 台式路径
-  path: E:\xiaofangwaimai\src\main\java\com\yefeng\images\ # 笔记本路径
+  path: F:\xiaofangwaimai\src\main\java\com\yefeng\images\ # 台式路径
+#  path: E:\xiaofangwaimai\src\main\java\com\yefeng\images\ # 笔记本路径
