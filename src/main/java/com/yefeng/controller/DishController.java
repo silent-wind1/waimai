@@ -53,7 +53,7 @@ public class DishController {
         BeanUtils.copyProperties(dishPage, dishDtoPage, "records");
         // 获取dishPage中的Records
         List<Dish> records = dishPage.getRecords();
-        // dishPage中的Recores是缺少
+        // dishPage中的records是缺少
         List<DishDto> list = records.stream().map(item -> {
             DishDto dishDto = new DishDto();
             BeanUtils.copyProperties(item, dishDto);
