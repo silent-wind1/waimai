@@ -1,5 +1,6 @@
 package com.yefeng.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yefeng.dto.DishDto;
 import com.yefeng.entity.Dish;
@@ -7,6 +8,7 @@ import com.yefeng.entity.DishFlavor;
 import com.yefeng.mapper.DishMapper;
 import com.yefeng.service.DishFlavorService;
 import com.yefeng.service.DishService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,5 +38,17 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         dishFlavorService.saveBatch(dishDto.getFlavors());
         //保存菜品口味到菜品数据表dish_flavor
         dishFlavorService.saveBatch(flavors);
+    }
+
+    @Override
+    public DishDto getByIdWithFlavor(Long id) {
+        Dish dish = this.getById(id);
+        DishDto dishDto = new DishDto();
+        BeanUtils.copyProperties(dish, dishDto);
+        QueryWrapper<DishFlavor> wrapper = new QueryWrapper<>();
+        wrapper.eq("dish_id", dish.getId());
+        List<DishFlavor> list = dishFlavorService.list(wrapper);
+        dishDto.setFlavors(list);
+        return dishDto;
     }
 }

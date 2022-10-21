@@ -53,13 +53,16 @@ public class DishController {
         BeanUtils.copyProperties(dishPage, dishDtoPage, "records");
         // 获取dishPage中的Records
         List<Dish> records = dishPage.getRecords();
-        // dishPage中的records是缺少
+        // 遍历records中的数据
         List<DishDto> list = records.stream().map(item -> {
             DishDto dishDto = new DishDto();
+            // 将item拷贝到dishDto中去
             BeanUtils.copyProperties(item, dishDto);
-            //根据id查分类对象
+            // 获取到categoryid
             Long categoryId = item.getCategoryId();
+            // 查询到categoryid这条数据
             Category category = categoryService.getById(categoryId);
+            // 如果查到了category这条件数据，获取到categoryName并添加到dishDto中，并且返回
             if(category != null) {
                 String categoryName = category.getName();
                 dishDto.setCategoryName(categoryName);
@@ -68,6 +71,17 @@ public class DishController {
         }).collect(Collectors.toList());
         dishDtoPage.setRecords(list);
         return R.success(dishDtoPage);
+    }
+
+    /**
+     * 获取修改菜品信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<DishDto> getById(@PathVariable Long id) {
+        DishDto dishDto = dishService.getByIdWithFlavor(id);
+        return R.success(dishDto);
     }
 
 }
