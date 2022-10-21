@@ -27,4 +27,5 @@ mybatis-plus:
 
 
 reggie:
-  path: F:\xiaofangwaimai\src\main\java\com\yefeng\images\
+#  path: F:\xiaofangwaimai\src\main\java\com\yefeng\images\ # 台式路径
+  path: E:\xiaofangwaimai\src\main\java\com\yefeng\images\ # 笔记本路径

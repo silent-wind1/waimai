@@ -25,7 +25,7 @@ public class CommonController {
     private String basePath;
     //文件上传
     @PostMapping("/upload")
-    public R<String> upload(MultipartFile file) {
+    public R<String> upload(MultipartFile file){
         //file 是一个临时文件，需要转存到指定位置，否则请求完成后临时文件会删除
         log.info("file:{}", file.toString());
         // 原始文件名
