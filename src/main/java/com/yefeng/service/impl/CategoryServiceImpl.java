@@ -12,6 +12,7 @@ import com.yefeng.service.DishService;
 import com.yefeng.service.SetmealService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
@@ -22,6 +23,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     private SetmealService setmealService;
 
     @Override
+    @Transactional
     public void remove(Long id) {
         //添加查询条件，根据分类id进行查询
         QueryWrapper<Dish> wrapper = new QueryWrapper<>();

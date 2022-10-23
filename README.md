@@ -46,7 +46,8 @@
 ## 二、项目环境
 - JDK：1.8+
 - Maven：3.6+
-- 数据库： mysql5.37
+- 数据库： mysql 5.37
+- MybatisPlus 3.5.2
 - 开发工具：IDEA
 - SpringBoot + MyBatis Plus + Vue + ElementUI
 

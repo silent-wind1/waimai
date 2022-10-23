@@ -12,6 +12,7 @@ import com.yefeng.service.DishService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     private DishFlavorService dishFlavorService;
 
     @Override
+    @Transactional
     public void saveWithFlavor(DishDto dishDto) {
         //保存菜品基本信息到菜品表dish
         this.save(dishDto);
@@ -44,6 +46,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     }
 
     @Override
+    @Transactional
     public DishDto getByIdWithFlavor(Long id) {
         Dish dish = this.getById(id);
         DishDto dishDto = new DishDto();
@@ -56,6 +59,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     }
 
     @Override
+    @Transactional
     public void updateWithFlavor(DishDto dishDto) {
         //更新dish表基本信息
         this.updateById(dishDto);
@@ -65,10 +69,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         dishFlavorService.remove(queryWrapper);
         //更新dish_flavor表信息insert操作
         List<DishFlavor> flavors = dishDto.getFlavors();
-        flavors = flavors.stream().map(item -> {
-            item.setDishId(dishDto.getId());
-            return item;
-        }).collect(Collectors.toList());
+        flavors = flavors.stream().peek(item -> item.setDishId(dishDto.getId())).collect(Collectors.toList());
         dishFlavorService.saveBatch(flavors);
     }
 
