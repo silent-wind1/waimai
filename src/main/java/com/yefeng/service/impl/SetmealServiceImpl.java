@@ -2,6 +2,7 @@ package com.yefeng.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yefeng.common.CustomException;
 import com.yefeng.dto.SetmealDto;
 import com.yefeng.entity.Setmeal;
 import com.yefeng.entity.SetmealDish;
@@ -61,5 +62,24 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         setmealDishes = setmealDishes.stream().peek(item -> item.setSetmealId(setmealDto.getId())).collect(Collectors.toList());
         setmealDishService.saveBatch(setmealDishes);
 
+    }
+
+    @Override
+    @Transactional
+    public void removeWithDish(List<Long> ids) {
+        // delete from setmeal where id in (1,2,3) and status=1;
+        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(Setmeal::getId, ids);
+        wrapper.eq(Setmeal::getStatus, 1);
+        long count = this.count();
+        if (count > 0) {
+            throw new CustomException("套餐正在售卖中，不能删除");
+        }
+        this.removeByIds(ids);
+        // delete from setmeal_dish where setmeal_id in (1,2,3);
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(SetmealDish::getSetmealId, ids);
+        // 删除关系表中的数据-setmeal_dish
+        setmealDishService.remove(queryWrapper);
     }
 }

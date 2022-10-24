@@ -98,4 +98,11 @@ public class SetmealController {
         setmealService.updateWithSeteal(setmealDto);
         return R.success("修改成功");
     }
+
+    @DeleteMapping
+    public R<String> delete(@RequestParam List<Long> ids) {
+        log.info("ids={}", ids);
+        setmealService.removeWithDish(ids);
+        return R.success("删除成功");
+    }
 }
