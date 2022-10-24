@@ -34,8 +34,8 @@ public class SetmealController {
     }
 
     @GetMapping("/page")
-    public R<Page> page(int page, int sizePage, String name) {
-        Page<Setmeal> pageInfo = new Page<>(page, sizePage);
+    public R<Page> page(int page, int pageSize, String name) {
+        Page<Setmeal> pageInfo = new Page<>(page, pageSize);
         Page<SetmealDto> setmealDishPage = new Page<>();
         LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(name != null, Setmeal::getName, name);
@@ -56,5 +56,28 @@ public class SetmealController {
         }).collect(Collectors.toList());
         setmealDishPage.setRecords(list);
         return R.success(setmealDishPage);
+    }
+
+
+    /**
+     * 获取套餐id数据
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<SetmealDto> getByID(@PathVariable Long id) {
+        SetmealDto list = setmealService.getByIdWithSetmeal(id);
+        return R.success(list);
+    }
+
+    /**
+     * 修改套餐信息
+     * @param setmealDto
+     * @return
+     */
+    @PutMapping
+    public R<String> update(@RequestBody SetmealDto setmealDto) {
+        setmealService.updateWithSeteal(setmealDto);
+        return R.success("修改成功");
     }
 }
