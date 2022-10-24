@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yefeng.common.R;
 import com.yefeng.dto.SetmealDto;
+import com.yefeng.entity.Category;
 import com.yefeng.entity.Setmeal;
 import com.yefeng.entity.SetmealDish;
+import com.yefeng.service.CategoryService;
 import com.yefeng.service.SetmealDishService;
 import com.yefeng.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,9 @@ public class SetmealController {
     private SetmealDishService setmealDishService;
 
     @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
     private SetmealService setmealService;
 
     @PostMapping
@@ -33,23 +38,36 @@ public class SetmealController {
         return R.success("添加成功");
     }
 
+    /**
+     * 套餐分页查询
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name) {
         Page<Setmeal> pageInfo = new Page<>(page, pageSize);
         Page<SetmealDto> setmealDishPage = new Page<>();
         LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+        // 查询
         wrapper.like(name != null, Setmeal::getName, name);
         wrapper.orderByDesc(Setmeal::getUpdateTime);
         setmealService.page(pageInfo, wrapper);
-        BeanUtils.copyProperties(pageInfo, setmealDishPage);
+        // 对象拷贝
+        BeanUtils.copyProperties(pageInfo, setmealDishPage, "records");
         List<Setmeal> records = pageInfo.getRecords();
+
         List<SetmealDto> list = records.stream().map(item -> {
             SetmealDto setmealDto = new SetmealDto();
+            // 拷贝对象
             BeanUtils.copyProperties(item, setmealDto);
+            // 分类id
             Long categoryId = item.getCategoryId();
-            Setmeal setmeal = setmealService.getById(categoryId);
-            if (setmeal != null) {
-                String setmealName = setmeal.getName();
+            // 根据分类id查询分类对象
+            Category category = categoryService.getById(categoryId);
+            if (category != null) {
+                String setmealName = category.getName();
                 setmealDto.setCategoryName(setmealName);
             }
             return setmealDto;
