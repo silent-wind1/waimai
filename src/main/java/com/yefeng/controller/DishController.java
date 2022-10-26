@@ -121,7 +121,11 @@ public class DishController {
         return R.success("删除成功");
     }
 
-
+    /**
+     *
+     * @param dish
+     * @return
+     */
     @GetMapping("/list")
     public R<List<Dish>> list(Dish dish) {
         LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();

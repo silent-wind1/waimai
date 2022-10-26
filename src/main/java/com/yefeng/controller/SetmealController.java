@@ -6,7 +6,6 @@ import com.yefeng.common.R;
 import com.yefeng.dto.SetmealDto;
 import com.yefeng.entity.Category;
 import com.yefeng.entity.Setmeal;
-import com.yefeng.entity.SetmealDish;
 import com.yefeng.service.CategoryService;
 import com.yefeng.service.SetmealDishService;
 import com.yefeng.service.SetmealService;
@@ -15,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,7 +58,7 @@ public class SetmealController {
         BeanUtils.copyProperties(pageInfo, setmealDishPage, "records");
         List<Setmeal> records = pageInfo.getRecords();
 
-        List<SetmealDto> list = records.stream().map(item -> {
+                List<SetmealDto> list = records.stream().map(item -> {
             SetmealDto setmealDto = new SetmealDto();
             // 拷贝对象
             BeanUtils.copyProperties(item, setmealDto);
@@ -99,10 +99,31 @@ public class SetmealController {
         return R.success("修改成功");
     }
 
+    /**
+     * 删除套餐信息
+     * @param ids
+     * @return
+     */
     @DeleteMapping
     public R<String> delete(@RequestParam List<Long> ids) {
         log.info("ids={}", ids);
         setmealService.removeWithDish(ids);
         return R.success("删除成功");
+    }
+
+    /**
+     * 停售套餐
+     * @param status
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    public R<String> sale(@PathVariable int status, String [] ids) {
+        for (String id : ids) {
+            Setmeal setmeal = setmealService.getById(id);
+            setmeal.setStatus(status);
+            setmealService.updateById(setmeal);
+        }
+        return R.success("修改成功");
     }
 }

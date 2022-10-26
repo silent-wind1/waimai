@@ -24,40 +24,50 @@ public class LoginCheckFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        log.info("");
         //1.获取request中的方法,将req和resp进行强转
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         //2.获取用户访问的路径
         String requestURI = request.getRequestURI();
-        log.info("拦截到请求：{}",requestURI);
+        log.info("拦截到请求：{}", requestURI);
         String[] urls = {
                 "/backend/**",
                 "/front/**",
                 "/employee/login",
                 "/employee/logout",
+                "/common/**",
+                "/user/sendMsg",
+                "/user/login",
         };
         //3.判断用户访问的路径是否在放行的路径中,若是直接放行
         boolean flag = checkURI(urls, requestURI);
         if (flag) {
-            log.info("本次请求{}不需要处理",requestURI);
+            log.info("本次请求{}不需要处理", requestURI);
             filterChain.doFilter(request, response);
             return;
         }
 
         //4.若是需要拦截的路径，再获取session中登陆对象
-        if(request.getSession().getAttribute("employee") != null) {
-            log.info("用户已登录，用户id为：{}",request.getSession().getAttribute("employee"));
+        if (request.getSession().getAttribute("employee") != null) {
+            log.info("用户已登录，用户id为：{}", request.getSession().getAttribute("employee"));
             // 获取当前线程id唯一标识
-            long id = Thread.currentThread().getId() ;
-            log.info("线程id:{}" ,id);
-            Long empId= (Long) request.getSession().getAttribute("employee");
+            long id = Thread.currentThread().getId();
+            log.info("线程id:{}", id);
+            Long empId = (Long) request.getSession().getAttribute("employee");
             BaseContext.setCurrentId(empId);
             filterChain.doFilter(request, response);
             return;
         }
 
+        //判断移动端用户是否登录
+        if (request.getSession().getAttribute("user") != null) {
+            log.info("用户已登录，用户id为：{}", request.getSession().getAttribute("user"));
+            Long userId = (Long) request.getSession().getAttribute("user");
+            BaseContext.setCurrentId(userId);
+            filterChain.doFilter(request, response);
+            return;
+        }
         //5.若没有对象,返回R.error("NOTLOGIN")
 
         response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
@@ -66,6 +76,7 @@ public class LoginCheckFilter implements Filter {
 
     /**
      * 路径匹配，检查本次请求是否需要放行
+     *
      * @param urls
      * @param requestURI
      * @return

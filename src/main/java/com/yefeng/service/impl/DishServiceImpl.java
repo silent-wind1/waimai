@@ -48,9 +48,11 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     @Override
     @Transactional
     public DishDto getByIdWithFlavor(Long id) {
+        //查询菜品基本信息
         Dish dish = this.getById(id);
         DishDto dishDto = new DishDto();
         BeanUtils.copyProperties(dish, dishDto);
+        //查询菜品口味信息
         QueryWrapper<DishFlavor> wrapper = new QueryWrapper<>();
         wrapper.eq("dish_id", dish.getId());
         List<DishFlavor> list = dishFlavorService.list(wrapper);
