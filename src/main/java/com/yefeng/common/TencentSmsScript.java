@@ -75,10 +75,15 @@ public class TencentSmsScript {
     }
 
     /**
-     * 随机生成验证码
+     *
+     * @param verfSize
      * @return
      */
-    public String[] achieveCode() {
+    public String[] achieveCode(int verfSize) {
+        // 验证码长度不为4和6那么抛出异常
+        if(verfSize != 4 && verfSize != 6) {
+            throw new CustomException("验证码长度有误，必须是4位或者6位");
+        }
         String[] beforeShuffle = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9"};
         List<String> list = Arrays.asList(beforeShuffle);//将数组转换为集合
         Collections.shuffle(list);  //打乱集合顺序
@@ -86,7 +91,7 @@ public class TencentSmsScript {
         for (String s : list) {
             sb.append(s); //将集合转化为字符串
         }
-        return new String[]{sb.substring(0, 6)};
+        return new String[]{sb.substring(0, verfSize)};
     }
 
     /**
