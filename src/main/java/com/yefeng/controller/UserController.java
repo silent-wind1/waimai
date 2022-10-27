@@ -34,7 +34,7 @@ public class UserController {
         String phone = user.getPhone();
         if (!phone.isEmpty()) {
             TencentSmsScript tencentSmsScript = new TencentSmsScript();
-            String[] code = tencentSmsScript.achieveCode();
+            String[] code = tencentSmsScript.achieveCode(6);
             log.info("验证码={}", code);
 //            String[] phone1 = tencentSmsScript.copyPhone(phone);
 //            tencentSmsScript.sendMsg(phone1, code);
@@ -73,3 +73,5 @@ public class UserController {
         return R.error("登录失败");
     }
 }
+
+
