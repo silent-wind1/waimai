@@ -38,7 +38,7 @@ public class UserController {
             log.info("验证码={}", code);
 //            String[] phone1 = tencentSmsScript.copyPhone(phone);
 //            tencentSmsScript.sendMsg(phone1, code);
-            session.setAttribute(phone, code);
+            session.setAttribute(phone, code[0]);
             return R.success("发送成功");
         }
         return R.success("发送失败");

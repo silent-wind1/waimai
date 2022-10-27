@@ -1,5 +1,6 @@
 package com.yefeng.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;

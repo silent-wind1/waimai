@@ -126,4 +126,18 @@ public class SetmealController {
         }
         return R.success("修改成功");
     }
+
+    /**
+     * 获取套餐接口
+     * @param setmeal
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(Setmeal setmeal) {
+        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Setmeal::getCategoryId, setmeal.getCategoryId());
+        wrapper.eq(Setmeal::getStatus, setmeal.getStatus());
+        List<Setmeal> list = setmealService.list(wrapper);
+        return R.success(list);
+    }
 }
