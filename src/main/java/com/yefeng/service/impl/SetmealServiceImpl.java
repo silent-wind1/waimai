@@ -22,6 +22,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
     @Autowired
     private SetmealDishService setmealDishService;
 
+
     /**
      * 新增套餐，同时要保持与菜品的关联关系
      *
@@ -84,4 +85,5 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         // 删除关系表中的数据-setmeal_dish
         setmealDishService.remove(queryWrapper);
     }
+
 }

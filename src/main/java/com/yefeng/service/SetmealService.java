@@ -15,4 +15,6 @@ public interface SetmealService extends IService<Setmeal> {
     void updateWithSeteal(SetmealDto setmealDto);
 
     void removeWithDish(List<Long> ids);
+
+//    List<SetmealDish> getByIdWithSetmealDto(Setmeal setmeal);
 }

@@ -6,6 +6,7 @@ import com.yefeng.common.R;
 import com.yefeng.dto.SetmealDto;
 import com.yefeng.entity.Category;
 import com.yefeng.entity.Setmeal;
+import com.yefeng.entity.SetmealDish;
 import com.yefeng.service.CategoryService;
 import com.yefeng.service.SetmealDishService;
 import com.yefeng.service.SetmealService;
@@ -14,7 +15,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +40,7 @@ public class SetmealController {
 
     /**
      * 套餐分页查询
+     *
      * @param page
      * @param pageSize
      * @param name
@@ -58,7 +59,7 @@ public class SetmealController {
         BeanUtils.copyProperties(pageInfo, setmealDishPage, "records");
         List<Setmeal> records = pageInfo.getRecords();
 
-                List<SetmealDto> list = records.stream().map(item -> {
+        List<SetmealDto> list = records.stream().map(item -> {
             SetmealDto setmealDto = new SetmealDto();
             // 拷贝对象
             BeanUtils.copyProperties(item, setmealDto);
@@ -79,6 +80,7 @@ public class SetmealController {
 
     /**
      * 获取套餐id数据
+     *
      * @param id
      * @return
      */
@@ -90,6 +92,7 @@ public class SetmealController {
 
     /**
      * 修改套餐信息
+     *
      * @param setmealDto
      * @return
      */
@@ -101,6 +104,7 @@ public class SetmealController {
 
     /**
      * 删除套餐信息
+     *
      * @param ids
      * @return
      */
@@ -113,12 +117,13 @@ public class SetmealController {
 
     /**
      * 停售套餐
+     *
      * @param status
      * @param ids
      * @return
      */
     @PostMapping("/status/{status}")
-    public R<String> sale(@PathVariable int status, String [] ids) {
+    public R<String> sale(@PathVariable int status, String[] ids) {
         for (String id : ids) {
             Setmeal setmeal = setmealService.getById(id);
             setmeal.setStatus(status);
@@ -129,6 +134,7 @@ public class SetmealController {
 
     /**
      * 获取套餐接口
+     *
      * @param setmeal
      * @return
      */
@@ -138,6 +144,20 @@ public class SetmealController {
         wrapper.eq(Setmeal::getCategoryId, setmeal.getCategoryId());
         wrapper.eq(Setmeal::getStatus, setmeal.getStatus());
         List<Setmeal> list = setmealService.list(wrapper);
+        return R.success(list);
+    }
+
+    @GetMapping("/dish/{id}")
+    public R<List<SetmealDish>> dishById(Setmeal setmeal) {
+        log.info("/dish/{id}={}", setmeal);
+//        查询到套餐信息
+        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Setmeal::getId, setmeal.getId());
+        Setmeal serviceById = setmealService.getOne(wrapper);
+
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SetmealDish::getSetmealId, serviceById.getId());
+        List<SetmealDish> list = setmealDishService.list(queryWrapper);
         return R.success(list);
     }
 }
