@@ -3,11 +3,15 @@ package com.yefeng.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yefeng.common.R;
+import com.yefeng.dto.DishDto;
+import com.yefeng.dto.SermealDishDto;
 import com.yefeng.dto.SetmealDto;
 import com.yefeng.entity.Category;
+import com.yefeng.entity.Dish;
 import com.yefeng.entity.Setmeal;
 import com.yefeng.entity.SetmealDish;
 import com.yefeng.service.CategoryService;
+import com.yefeng.service.DishService;
 import com.yefeng.service.SetmealDishService;
 import com.yefeng.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +34,9 @@ public class SetmealController {
 
     @Autowired
     private SetmealService setmealService;
+
+    @Autowired
+    private DishService dishService;
 
     @PostMapping
     public R<String> save(@RequestBody SetmealDto setmealDto) {
@@ -147,17 +154,51 @@ public class SetmealController {
         return R.success(list);
     }
 
-    @GetMapping("/dish/{id}")
-    public R<List<SetmealDish>> dishById(Setmeal setmeal) {
-        log.info("/dish/{id}={}", setmeal);
-//        查询到套餐信息
-        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Setmeal::getId, setmeal.getId());
-        Setmeal serviceById = setmealService.getOne(wrapper);
 
-        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(SetmealDish::getSetmealId, serviceById.getId());
-        List<SetmealDish> list = setmealDishService.list(queryWrapper);
-        return R.success(list);
+//    @GetMapping("/dish/{id}")
+//    public R<List<SermealDishDto>> dishById(SetmealDto SetmealDto) {
+//        log.info("/dish/{id}={}", SetmealDto);
+//        // 查询到该套餐里的菜品信息
+//        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(SetmealDish::getSetmealId, SetmealDto.getId());
+//        List<SetmealDish> list = setmealDishService.list(queryWrapper);
+//
+//        List<SermealDishDto> setmealDtos = list.stream().map(item -> {
+//            SermealDishDto sermealDishDto = new SermealDishDto();
+//            BeanUtils.copyProperties(item, sermealDishDto);
+//            // 查询菜品信息里的图片
+//            Dish dish = dishService.getById(item.getDishId());
+//            sermealDishDto.setImage(dish.getImage());
+//            return sermealDishDto;
+//        }).collect(Collectors.toList());
+//        return R.success(setmealDtos);
+//    }
+
+    /**
+     * 移动端点击套餐展示菜品信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/dish/{id}")
+    public R<List<DishDto>> showSetmealDish(@PathVariable Long id) {
+        //条件构造器
+        LambdaQueryWrapper<SetmealDish> dishLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        //手里的数据只有setmealId
+        dishLambdaQueryWrapper.eq(SetmealDish::getSetmealId, id);
+        //查询数据
+        List<SetmealDish> records = setmealDishService.list(dishLambdaQueryWrapper);
+        List<DishDto> dtoList = records.stream().map(item -> {
+            DishDto dishDto = new DishDto();
+            //copy数据
+            BeanUtils.copyProperties(item,dishDto);
+            //查询对应菜品id
+            Long dishId = item.getDishId();
+            //根据菜品id获取具体菜品数据，这里要自动装配 dishService
+            Dish dish = dishService.getById(dishId);
+            //其实主要数据是要那个图片，不过我们这里多copy一点也没事
+            BeanUtils.copyProperties(dish, dishDto);
+            return dishDto;
+        }).collect(Collectors.toList());
+        return R.success(dtoList);
     }
 }

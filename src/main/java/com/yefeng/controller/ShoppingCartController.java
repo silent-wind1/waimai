@@ -23,6 +23,7 @@ public class ShoppingCartController {
 
     /**
      * 添加购物车
+     *
      * @param shoppingCart
      * @return
      */
@@ -35,17 +36,17 @@ public class ShoppingCartController {
         LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ShoppingCart::getUserId, id);
         // 判断菜品id是否为空，如果为空则表示选中的是套餐
-        if(shoppingCart.getDishId() != null) {
+        if (shoppingCart.getDishId() != null) {
             wrapper.eq(ShoppingCart::getDishId, shoppingCart.getDishId());
-        }else {
+        } else {
             wrapper.eq(ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
         }
         ShoppingCart cartServiceOne = shoppingCartService.getOne(wrapper);
-        if(cartServiceOne != null) {
+        if (cartServiceOne != null) {
             Integer number = cartServiceOne.getNumber();
             cartServiceOne.setNumber(number + 1);
             shoppingCartService.updateById(cartServiceOne);
-        }else {
+        } else {
             shoppingCart.setNumber(1);
             shoppingCart.setCreateTime(LocalDateTime.now());
             shoppingCartService.save(shoppingCart);
@@ -54,9 +55,62 @@ public class ShoppingCartController {
         return R.success(cartServiceOne);
     }
 
+    /**
+     * 查看购物车信息
+     *
+     * @return
+     */
     @GetMapping("/list")
     public R<List<ShoppingCart>> list() {
-        ArrayList<ShoppingCart> list = new ArrayList<>();
+        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
+        wrapper.orderByDesc(ShoppingCart::getCreateTime);
+        List<ShoppingCart> list = shoppingCartService.list();
         return R.success(list);
+    }
+
+    /**
+     * 清空购物车
+     *
+     * @return
+     */
+    @DeleteMapping("/clean")
+    public R<String> clean() {
+        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
+        shoppingCartService.remove(wrapper);
+        return R.success("清空成功");
+    }
+
+    /**
+     * 减少购物车
+     * @param shoppingCart
+     * @return
+     */
+    @PostMapping("/sub")
+    public R<ShoppingCart> sub(@RequestBody ShoppingCart shoppingCart) {
+        // 拿到用户id并添加到购物车数据中
+        Long id = BaseContext.getCurrentId();
+        shoppingCart.setUserId(id);
+        log.info("购物车数据={}", shoppingCart);
+        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ShoppingCart::getUserId, id);
+        // 判断菜品id是否为空，如果为空则表示选中的是套餐
+        if (shoppingCart.getDishId() != null) {
+            wrapper.eq(ShoppingCart::getDishId, shoppingCart.getDishId());
+        } else {
+            wrapper.eq(ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
+        }
+        ShoppingCart cartServiceOne = shoppingCartService.getOne(wrapper);
+        if (cartServiceOne.getNumber() != null) {
+            Integer number = cartServiceOne.getNumber();
+            cartServiceOne.setNumber(number - 1);
+            if (cartServiceOne.getNumber() == 0) {
+                shoppingCartService.removeById(cartServiceOne);
+            } else {
+                shoppingCartService.updateById(cartServiceOne);
+            }
+        }
+        return R.success(cartServiceOne);
     }
 }
