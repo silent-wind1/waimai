@@ -84,6 +84,7 @@ public class ShoppingCartController {
 
     /**
      * 减少购物车
+     *
      * @param shoppingCart
      * @return
      */
@@ -102,14 +103,12 @@ public class ShoppingCartController {
             wrapper.eq(ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
         }
         ShoppingCart cartServiceOne = shoppingCartService.getOne(wrapper);
-        if (cartServiceOne.getNumber() != null) {
-            Integer number = cartServiceOne.getNumber();
-            cartServiceOne.setNumber(number - 1);
-            if (cartServiceOne.getNumber() == 0) {
-                shoppingCartService.removeById(cartServiceOne);
-            } else {
-                shoppingCartService.updateById(cartServiceOne);
-            }
+        Integer number1 = cartServiceOne.getNumber();
+        if (number1 == 1) {
+            shoppingCartService.remove(wrapper);
+        } else {
+            cartServiceOne.setNumber(number1 - 1);
+            shoppingCartService.updateById(cartServiceOne);
         }
         return R.success(cartServiceOne);
     }
