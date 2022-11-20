@@ -59,7 +59,7 @@ public class TencentSmsScript {
             //设置自己短信签名名称，不是签名id
             req.setSign("冷影默枫小程序");
             //设置自己短信模板id
-            req.setTemplateID("1585487");
+            req.setTemplateID("xxxx");
 
             //设置验证码
             req.setTemplateParamSet(code);
