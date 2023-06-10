@@ -3,6 +3,8 @@ package com.yefeng.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yefeng.common.R;
 import com.yefeng.dto.DishDto;
 import com.yefeng.entity.Category;
@@ -15,9 +17,13 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -37,6 +43,10 @@ public class DishController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
 
     @PostMapping
     public R<String> save(@RequestBody DishDto dishDto) {
@@ -140,7 +150,14 @@ public class DishController {
 //    }
 
     @GetMapping("/list")
-    public R<List<DishDto>> list(Dish dish) {
+    public R<List<DishDto>> list(Dish dish) throws JsonProcessingException {
+        String key = "dish_" + dish.getCategoryId() + "_" + dish.getStatus();
+        // 去redis获取缓存数据看是否有数据
+        List<DishDto> dishDtoList = (List<DishDto>) redisTemplate.opsForValue();
+        if(dishDtoList != null) {
+            return R.success(dishDtoList);
+        }
+
         LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Dish::getStatus, 1);
         wrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
@@ -148,7 +165,7 @@ public class DishController {
         List<Dish> list = dishService.list(wrapper);
         log.info("查询到的菜品信息list:{}",list);
         //item就是list中的每一条数据，相当于遍历了
-        List<DishDto> dishDtoList = list.stream().map(item -> {
+        dishDtoList = list.stream().map(item -> {
             DishDto dishDto = new DishDto();
             //将item的属性全都copy到dishDto里
             BeanUtils.copyProperties(item, dishDto);
@@ -167,6 +184,7 @@ public class DishController {
             dishDto.setFlavors(flavorList);
             return dishDto;
         }).collect(Collectors.toList());
+        redisTemplate.opsForValue().set(key, dishDtoList,60, TimeUnit.MINUTES);
         return R.success(dishDtoList);
     }
 }
