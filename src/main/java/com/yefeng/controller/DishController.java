@@ -11,6 +11,7 @@ import com.yefeng.entity.DishFlavor;
 import com.yefeng.service.CategoryService;
 import com.yefeng.service.DishFlavorService;
 import com.yefeng.service.DishService;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/dish")
+@Api("菜品控制")
 public class DishController {
     @Autowired
     private DishService dishService;

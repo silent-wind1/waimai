@@ -77,4 +77,10 @@ class XiaofangwaimaiApplicationTests {
         String substring = fileName.substring(fileName.lastIndexOf("."));
         System.out.println(substring);
     }
+
+
+    @Test
+    void testShortMessage() {
+
+    }
 }

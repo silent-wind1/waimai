@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yefeng.common.R;
 import com.yefeng.dto.DishDto;
-import com.yefeng.dto.SermealDishDto;
 import com.yefeng.dto.SetmealDto;
 import com.yefeng.entity.Category;
 import com.yefeng.entity.Dish;
@@ -48,10 +47,6 @@ public class SetmealController {
     /**
      * 套餐分页查询
      *
-     * @param page
-     * @param pageSize
-     * @param name
-     * @return
      */
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name) {
@@ -88,8 +83,6 @@ public class SetmealController {
     /**
      * 获取套餐id数据
      *
-     * @param id
-     * @return
      */
     @GetMapping("/{id}")
     public R<SetmealDto> getByID(@PathVariable Long id) {
@@ -100,8 +93,6 @@ public class SetmealController {
     /**
      * 修改套餐信息
      *
-     * @param setmealDto
-     * @return
      */
     @PutMapping
     public R<String> update(@RequestBody SetmealDto setmealDto) {
@@ -111,9 +102,6 @@ public class SetmealController {
 
     /**
      * 删除套餐信息
-     *
-     * @param ids
-     * @return
      */
     @DeleteMapping
     public R<String> delete(@RequestParam List<Long> ids) {
@@ -125,9 +113,6 @@ public class SetmealController {
     /**
      * 停售套餐
      *
-     * @param status
-     * @param ids
-     * @return
      */
     @PostMapping("/status/{status}")
     public R<String> sale(@PathVariable int status, String[] ids) {
@@ -177,7 +162,6 @@ public class SetmealController {
     /**
      * 移动端点击套餐展示菜品信息
      * @param id
-     * @return
      */
     @GetMapping("/dish/{id}")
     public R<List<DishDto>> showSetmealDish(@PathVariable Long id) {

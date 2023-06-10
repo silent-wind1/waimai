@@ -40,7 +40,7 @@ public class TencentSmsScript {
         try {
             // 注意点：填写自己的secreteid和secretekey，密钥在腾讯云访问密钥获取
             // 密钥可前往https://console.cloud.tencent.com/cam/capi网站进行获取
-            Credential cred = new Credential("公钥账号", "公钥密码");
+            Credential cred = new Credential("AKIDizHpIchaEnCVhlcOGzeAVev40jhOr7LX", "GKP8i9LOCoNm5NYYP9jT7cw265qOlu8E");
             // 实例化一个http选项，可选的，没有特殊需求可以跳过
             HttpProfile httpProfile = new HttpProfile();
             httpProfile.setEndpoint("sms.tencentcloudapi.com");
@@ -55,11 +55,11 @@ public class TencentSmsScript {
             req.setPhoneNumberSet(phone);
 
             //设置自己的SdkAppID
-            req.setSmsSdkAppid("SDKappID");
+            req.setSmsSdkAppid("1400755385");
             //设置自己短信签名名称，不是签名id
             req.setSign("冷影默枫小程序");
             //设置自己短信模板id
-            req.setTemplateID("xxxx");
+            req.setTemplateID("1585487");
 
             //设置验证码
             req.setTemplateParamSet(code);

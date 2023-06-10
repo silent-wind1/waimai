@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * 套餐菜品关系
  */
 @Data
-public class SetmealDish implements Serializable {
+public class SetmealDish implements Serializable { // 呸，你根本没定义
 
     private static final long serialVersionUID = 1L;
 
